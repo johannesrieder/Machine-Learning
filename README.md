@@ -32,6 +32,7 @@ Matrices) der drei zugehörigen Klassifikationsmodelle bzgl. der Testdaten.
 Verwenden Sie fur K = 1, 3, 5 KNN, um den Wert der Output Variable Purchase der
 Testdaten zu schätzen. Bestimmen Sie jeweils die Wahrheitsmatrix. Berucksichtigen
 Sie hierbei alle 85 Input Variablen und denken Sie an die Skalierung der Daten.
-4 Modellauswahl
+
+## 4 Modellauswahl
 Sie haben 6 Klassifikationsmodelle berechnet. Welches Modell ist Ihrer Meinung nach
 besser in der oben geschilderten Situation geeignet? Begrunden Sie Ihre Antwort.
