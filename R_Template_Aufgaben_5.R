@@ -6,7 +6,7 @@
 #-----------------
 # Bitte ausf?llen:
 #-----------------
-# Gruppenname: Obi Wan
+# Gruppenname: Obi Wan 
 # Gruppenteilnehmer:
 
 
