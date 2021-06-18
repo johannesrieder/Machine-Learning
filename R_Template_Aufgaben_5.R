@@ -20,21 +20,18 @@ library(class)  # knn Funktion
 #------------------------------------
 # Aufgabe 1: Trainings- und Testdaten
 #------------------------------------
-summary(Caravan)
 data <- ISLR::Caravan
 
 set.seed(42)
+rows.train <- sample(length(data$Purchase),0.8*length(data$Purchase))
 
-size <- sample(length(data$Purchase),0.8*length(data$Purchase))
-train <- data[size,]
-test <- data[-size,]
-
-train.classes <- data[size,]
-test.classes <- data[-size,]
+train         <- as.data.frame(data[rows.train,])
+test          <- as.data.frame(data[-rows.train,])
 
 #------------------------------------
 # Aufgabe 2: Logistische Regression
 #------------------------------------
+#Logistische Regression mit Output-Variable Purchase und den anderen Variablen als Input-Variablen
 glm.fit <- glm(
   data    = train,
   formula = Purchase ~ .,
@@ -43,49 +40,46 @@ glm.fit <- glm(
 
 summary(glm.fit)
 
-# cut-off-points
-t <- c(0.4, 0.5, 0.6)
+# Drei verschiedene Cut-Off Points
+t <- c(0.15, 0.35, 0.55)
 
 
-## Confusion-Matrix (test)
+## Vorhersage der Wahrscheinlichkeiten der Testdaten auf Basis der logistischen Regression
 test.glm.predictedProbabilities <- predict( 
   object  = glm.fit, 
   newdata = test, 
   type    = "response"
 )
 
-## Confusion-Matrix (train)
-train.glm.predictedProbabilities <- predict( 
-  object  = glm.fit, 
-  newdata = train, 
-  type    = "response"
-)
-
+# For-Schleife erzeugt Confusion-Matrizen anhand der drei Cut-Off Points
 for (p in t) {
   print(p)
-  # CM (test)
-  test.glm.prediction      <- ifelse(test.glm.predictedProbabilities < p, 0, 1)  
+  test.glm.prediction      <- ifelse(test.glm.predictedProbabilities <= p, 0, 1)  
   test.glm.confusionMatrix <- table(test.glm.prediction,test$Purchase)
   print(test.glm.confusionMatrix)
-  
-  # CM (train)
-  # train.glm.prediction <- ifelse(train.glm.predictedProbabilities < p, 0, 1)  
-  # train.glm.confusionMatrix <- table(train.glm.prediction,train$Purchase)
-  # print(train.glm.confusionMatrix)
 }
-
 
 #------------------------------------
 # Aufgabe 3: KNN
 #------------------------------------
 
-knn.pred.k3 <- knn(
+# Drei verschiedene K für KNN
+train         <- as.data.frame(data[rows.train, seq(1, length(train)-1, 1)])
+test          <- as.data.frame(data[-rows.train,])
+train.classes <- data[rows.train, seq(1, length(train)-1, 1)]
+test.classes  <- data[-rows.train, "Purchase"]
+k <- c(1, 3, 5)
+
+knn <- knn(
   train = train,         ## Input-Variablen der Trainingsdaten      
   test  = test,          ## Input-Variablen der Testdaten
   cl    = train.classes, ## Class-Label der Trainingsdaten
   k     = 3,
-  prob = FALSE
+  prob = TRUE
 ) 
+
+confusion.table.k3 <- table(knn, train.classes)
+
 
 #------------------------------------
 # Aufgabe 4: Modellauswahl
