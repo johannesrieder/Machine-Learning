@@ -26,65 +26,66 @@ data <- ISLR::Caravan
 set.seed(42)
 
 size <- sample(length(data$Purchase),0.8*length(data$Purchase))
-train <- as.data.frame(data[size,c("Purchase")])
-test <- as.data.frame(data[-size,c("Purchase")])
+train <- data[size,]
+test <- data[-size,]
+
+train.classes <- data[size,]
+test.classes <- data[-size,]
 
 #------------------------------------
 # Aufgabe 2: Logistische Regression
 #------------------------------------
 glm.fit <- glm(
   data    = train,
-  formula = y ~ .,
+  formula = Purchase ~ .,
   family  = "binomial"
 )
 
 summary(glm.fit)
 
-# Cut-Off-Point t=0.5:
-# Steigung = -a1/a2
-# y-Achsenabschnitt = -a0/a2
-steigung         <-  - glm.fit$coef["x1"] / glm.fit$coef["x2"]  
-yAchsenAbschnitt <-  - glm.fit$coef["(Intercept)"] / glm.fit$coef["x2"]
-
-# Plot 
-plot(data1, col="red",ylim=c(-100,150))
-points(data2, col="green")
-abline(a=yAchsenAbschnitt, b=steigung, col="blue")
-
-# Plot (nur Testdaten)
-plot(subset(test,y==0,select=x1:x2), col="red",ylim=c(-100,150))
-points(subset(test,y==1,select=x1:x2), col="green")
-abline(a=yAchsenAbschnitt, b=steigung, col="blue")
+# cut-off-points
+t <- c(0.4, 0.5, 0.6)
 
 
-## Confusion-Matrix (Testdaten)
+## Confusion-Matrix (test)
 test.glm.predictedProbabilities <- predict( 
   object  = glm.fit, 
-  newdata = data.test, 
+  newdata = test, 
   type    = "response"
 )
 
-test.glm.prediction      <- ifelse(test.glm.predictedProbabilities < 0.5, 0, 1)  
-test.glm.confusionMatrix <- table(test.glm.prediction,data.test$y)
-test.glm.confusionMatrix
-
-## Confusion-Matrix (Trainingsdaten)
+## Confusion-Matrix (train)
 train.glm.predictedProbabilities <- predict( 
   object  = glm.fit, 
-  newdata = data.train, 
+  newdata = train, 
   type    = "response"
 )
 
-train.glm.prediction <- ifelse(train.glm.predictedProbabilities < 0.5, 0, 1)  
-train.glm.confusionMatrix <- table(train.glm.prediction,data.train$y)
-train.glm.confusionMatrix
+for (p in t) {
+  print(p)
+  # CM (test)
+  test.glm.prediction      <- ifelse(test.glm.predictedProbabilities < p, 0, 1)  
+  test.glm.confusionMatrix <- table(test.glm.prediction,test$Purchase)
+  print(test.glm.confusionMatrix)
+  
+  # CM (train)
+  # train.glm.prediction <- ifelse(train.glm.predictedProbabilities < p, 0, 1)  
+  # train.glm.confusionMatrix <- table(train.glm.prediction,train$Purchase)
+  # print(train.glm.confusionMatrix)
+}
 
 
 #------------------------------------
 # Aufgabe 3: KNN
 #------------------------------------
 
-#    ...Platz für Ihren Code...
+knn.pred.k3 <- knn(
+  train = train,         ## Input-Variablen der Trainingsdaten      
+  test  = test,          ## Input-Variablen der Testdaten
+  cl    = train.classes, ## Class-Label der Trainingsdaten
+  k     = 3,
+  prob = FALSE
+) 
 
 #------------------------------------
 # Aufgabe 4: Modellauswahl
