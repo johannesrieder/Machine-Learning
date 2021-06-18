@@ -33,6 +33,12 @@ test            <- as.data.frame(data[-size,c("purchase")])
 train.classes   <- data[size, "default"]
 test.classes    <- data[-size, "default"]
 
+# Warum so kompliziert? :D
+#set.seed(42)
+#n          <- length(Caravan$Purchase)
+#trainingRows <- sample(n, 0.8*n)
+#DefaultTraining <- Caravan[trainingRows,]
+#DefaultTest     <- Caravan[-trainingRows,]
 
 #------------------------------------
 # Aufgabe 2: Logistische Regression
