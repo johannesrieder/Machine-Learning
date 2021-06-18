@@ -22,29 +22,18 @@ library(class)  # knn Funktion
 #------------------------------------
 summary(Caravan)
 data <- ISLR::Caravan
-x <- data$Purchase
-y <- data$ABYSTAND
 
-set.seed(99)
-size <- sample(length(data),0.8*length(data))
+set.seed(42)
 
-train           <- as.data.frame(data[size,c("purchase")])
-test            <- as.data.frame(data[-size,c("purchase")])
-train.classes   <- data[size, "default"]
-test.classes    <- data[-size, "default"]
-
-# Warum so kompliziert? :D
-#set.seed(42)
-#n          <- length(Caravan$Purchase)
-#trainingRows <- sample(n, 0.8*n)
-#DefaultTraining <- Caravan[trainingRows,]
-#DefaultTest     <- Caravan[-trainingRows,]
+size <- sample(length(data$Purchase),0.8*length(data$Purchase))
+train <- as.data.frame(data[size,c("Purchase")])
+test <- as.data.frame(data[-size,c("Purchase")])
 
 #------------------------------------
 # Aufgabe 2: Logistische Regression
 #------------------------------------
 glm.fit <- glm(
-  data    = data.train,
+  data    = train,
   formula = y ~ .,
   family  = "binomial"
 )
