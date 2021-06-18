@@ -7,7 +7,7 @@
 # Bitte ausf?llen:
 #-----------------
 # Gruppenname: Obi Wan 
-# Gruppenteilnehmer:
+# Gruppenteilnehmer: Marius Bauer, Johannes Rieder, Jannik Steck, Lisa Trovato-Monastra
 
 
 
