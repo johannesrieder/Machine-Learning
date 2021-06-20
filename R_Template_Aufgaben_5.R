@@ -11,7 +11,7 @@
 
 
 #-------------------------
-# notwendinge Bibliotheken
+# notwendige Bibliotheken
 #-------------------------
 library(ISLR)   # Datensatz
 library(class)  # knn Funktion
@@ -22,12 +22,12 @@ library(class)  # knn Funktion
 data <- ISLR::Caravan
 
 set.seed(43)
-rows.train <-
-  sample(length(data$Purchase), 0.8 * length(data$Purchase))
-
+# Einteilung des Caravan-Datensatzes in 80% Trainings- und 20% Testdaten
+rows.train <- sample(length(data$Purchase), 0.8 * length(data$Purchase))
 train         <- as.data.frame(data[rows.train,])
 test          <- as.data.frame(data[-rows.train,])
 
+# Initialisierung einer Matrizen-Liste für Aufgabe 4
 matrices <- list()
 
 #------------------------------------
@@ -39,29 +39,27 @@ glm.fit <- glm(data    = train,
                family  = "binomial")
 
 # Drei verschiedene Cut-Off Points
-t <- c(0.15, 0.35, 0.55)
+cutoffpoints <- c(0.15, 0.35, 0.55)
 
 ## Vorhersage der Wahrscheinlichkeiten der Testdaten auf Basis der logistischen Regression
 glm_predprob <- predict(object  = glm.fit,
                         newdata = test,
                         type    = "response")
 
-# For-Schleife erzeugt Confusion-Matrizen anhand der drei Cut-Off Points
-for (p in t) {
+# For-Schleife erzeugt Confusion-Matrizen anhand der drei zuvor festgelegten Cut-Off Points
+for (p in cutoffpoints) {
   glm_pred      <- ifelse(glm_predprob <= p, 0, 1)
   lr_confusionmatrix = table(glm_pred, test$Purchase)
   matrices[[length(matrices)+1]] <- list(paste("lr_confusionmatrix_t", p, sep = ""), lr_confusionmatrix)
-  print(paste("Confusion Matrix ( t =", p, ")"))
+  print(paste("Confusion Matrix ( Cut-Off Point =", p, ")"))
   print(lr_confusionmatrix)
-  
-}
+  }
 
 #------------------------------------
 # Aufgabe 3: KNN
 #------------------------------------
 
-# Skalierung notwendig, da 85 unterschiedliche Input-Variablen
-# Input-Variablen ohne Output-Variable
+# Input-Variablen ohne Output-Variable Purchase
 invar <- seq(0, length(train) - 1, 1)
 
 # Purchase wird von Trainingsdaten entfernt
@@ -80,6 +78,7 @@ test_label  <- test[['Purchase']]
 k <- c(1, 3, 5)
 
 # Anwendung knn-Funktion mit drei unterschiedlichen k
+# Skalierung notwendig, da 85 unterschiedliche Input-Variablen
 for (i in k) {
   knn <- knn(
     train = scale(knn_train),
@@ -95,19 +94,20 @@ for (i in k) {
   print(knn_confusionmatrix)
 }
 
-
 #------------------------------------
 # Aufgabe 4: Modellauswahl
 #------------------------------------
 
-# Summary der Confusion Matrices
-
+# Summary der sechs Confusion Matrizen aus den Aufgaben 2 und 3
 for (matrix in matrices) {
   m = matrix[[2]]
-  
+  # true negative Element der Matrix
   tn = m[1]
+  # false positive Element der Matrix
   fp = m[2]
+  # false negative Element der Matrix
   fn = m[3]
+  # true positive Element der Matrix
   tp = m[4]
 
   print("==============================================================")
