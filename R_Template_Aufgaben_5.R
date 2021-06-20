@@ -39,7 +39,7 @@ glm.fit <- glm(data    = train,
                family  = "binomial")
 
 # Drei verschiedene Cut-Off Points
-cutoffpoints <- c(0.15, 0.35, 0.55)
+cutoffpoints <- c(0.05, 0.15, 0.35)
 
 ## Vorhersage der Wahrscheinlichkeiten der Testdaten auf Basis der logistischen Regression
 glm_predprob <- predict(object  = glm.fit,
@@ -48,8 +48,8 @@ glm_predprob <- predict(object  = glm.fit,
 
 # For-Schleife erzeugt Confusion-Matrizen anhand der drei zuvor festgelegten Cut-Off Points
 for (p in cutoffpoints) {
-  glm_pred      <- ifelse(glm_predprob <= p, 0, 1)
-  lr_confusionmatrix = table(glm_pred, test$Purchase)
+  lr      <- ifelse(glm_predprob <= p, 0, 1)
+  lr_confusionmatrix = table(lr, test$Purchase)
   matrices[[length(matrices)+1]] <- list(paste("lr_confusionmatrix_t", p, sep = ""), lr_confusionmatrix)
   print(paste("Confusion Matrix ( Cut-Off Point =", p, ")"))
   print(lr_confusionmatrix)
@@ -89,7 +89,7 @@ for (i in k) {
   )
   # Erzeugung und Ausgabe der Confusion Matrix
   knn_confusionmatrix = table(knn, test_label)
-  matrices[[length(matrices)+1]] <- list(paste("knn_confusionmatrix_k", i, sep = ""), lr_confusionmatrix)
+  matrices[[length(matrices)+1]] <- list(paste("knn_confusionmatrix_k", i, sep = ""), knn_confusionmatrix)
   print(paste("Confusion Matrix ( k =", i, ")"))
   print(knn_confusionmatrix)
 }
