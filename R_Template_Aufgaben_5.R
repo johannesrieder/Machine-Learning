@@ -21,7 +21,7 @@ library(class)  # knn Funktion
 #------------------------------------
 data <- ISLR::Caravan
 
-set.seed(43)
+set.seed(50)
 # Einteilung des Caravan-Datensatzes in 80% Trainings- und 20% Testdaten
 rows.train <- sample(length(data$Purchase), 0.8 * length(data$Purchase))
 train         <- as.data.frame(data[rows.train,])
@@ -66,15 +66,14 @@ invar <- seq(0, length(data) - 1, 1)
 scaled_data <- scale(data[, invar])
 
 # Einteilung des skalierten Caravan-Datensatzes in 80% Trainings- und 20% Testdaten
-rows.scaled_train <- sample(length(data$Purchase), 0.8 * length(data$Purchase))
-scaled_train         <- as.data.frame(scaled_data[rows.scaled_train,])
-scaled_test          <- as.data.frame(scaled_data[-rows.scaled_train,])
+scaled_train         <- as.data.frame(scaled_data[rows.train,])
+scaled_test          <- as.data.frame(scaled_data[-rows.train,])
 
 # Label der Trainingsdaten für Purchase-Klassifikation als Vektor
-train_label <- as.data.frame(data[rows.scaled_train,])[['Purchase']]
+train_label <- as.data.frame(data[rows.train,])[['Purchase']]
 
 # Label der Testdaten für Purchase-Klassifikation als Vektor
-test_label  <- as.data.frame(data[-rows.scaled_train,])[['Purchase']]
+test_label  <- as.data.frame(data[-rows.train,])[['Purchase']]
 
 # Drei verschiedene K für knn-Funktion
 k <- c(1, 3, 5)
@@ -106,9 +105,9 @@ for (matrix in matrices) {
   # true negative Element der Matrix
   tn = m[1]
   # false positive Element der Matrix
-  fp = m[2]
+  fp = m[3]
   # false negative Element der Matrix
-  fn = m[3]
+  fn = m[2]
   # true positive Element der Matrix
   tp = m[4]
 
@@ -116,12 +115,15 @@ for (matrix in matrices) {
   print(matrix[[1]])
   print("--------------------------------------------------------------")
   print(paste("Positives / Negatives: ", tp+fn, "/", fp+tn))
-  prec_t <- (tp+tn)/(tp+fp+fn+tn)
-  print(paste("Average Precision: ", prec_t))
-  prec_tp <- tp/(tp+fn)
-  print(paste("Precision (Positives): ", prec_tp))
-  prec_tn <- tn/(fp+tn)
-  print(paste("Precision (Negatives): ", prec_tn))
+  prec_a <- (tp+tn)/(tp+fp+fn+tn)
+  print(paste("Average Precision: ", prec_a))
+  recall <- tp/(fn+tp)
+  print(paste("Precision (Positives) / Recall: ", recall))
+  prec_n <- tn/(fp+tn)
+  print(paste("Precision (Negatives): ", prec_n))
+  prec <- tp/(fp+tp)
+  f1 <- 2*((prec*recall)/(prec+recall))
+  print(paste("F1-Score: ", f1))
   print("--------------------------------------------------------------")
   print(paste("TN (1,1) / FP (1,2) / FN (2,1) / TP (2,2): ", tn, "/", fp, "/", fn, "/", tp))
   print(m)
@@ -140,13 +142,14 @@ for (matrix in matrices) {
 # Modellauswahl ###
 
 # Das Modell der logistischen Regression mit einem cut-off-point bei 
-# 0.05 (lr_confusionmatrix_t0.05) weist 35 false-positives und
-# 49 true-positives auf. Das oben beschriebene Ziel, die positives bestmöglich 
-# zu prognostizieren, wird damit mit einer Precision von 58.3 % am
+# 0.05 (lr_confusionmatrix_t0.05) weist 21 false-positives und
+# 47 true-positives auf. Das oben beschriebene Ziel, die positives bestmöglich 
+# zu prognostizieren, wird damit mit einem Recall von 11.2 % am
 # ehesten von den berechneten Modellen erreicht. Das Modell eignet sich jedoch
 # nur für diesen Anwendungsfall, da die Negatives-Precision der anderen Modelle
 # deutlich besser ist. Hierdurch kann die höhere average Precision der anderen 
-# Modelle begründet werden.
+# Modelle begründet werden. Auch der F1-Score fällt bei lr_confusionmatrix_t0.05
+# am besten aus, obwohl der Score mit 0.19 weit vom Optimum 1.0 entfernt ist.
 
 # Auffälligkeiten ###
 
@@ -156,5 +159,5 @@ for (matrix in matrices) {
 # einen akzeptablen trade-off zwischen Precision und Sensitivity zu erreichen.
 
 # Die KNN-Modelle eignen sich für diesen Anwendungsfall eher weniger, da mit 
-# 12.5 % (k=1), 7.8 % (k=3), 3.1 % (k=5) eine niedrige Precision der Positives
+# 13.0 % (k=1), 10.5 % (k=3), 12.5 % (k=5) eine niedrige Precision der Positives
 # zugrunde gelegt wird.
