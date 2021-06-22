@@ -60,19 +60,27 @@ for (p in cutoffpoints) {
 #------------------------------------
 
 # Input-Variablen ohne Output-Variable Purchase
-invar <- seq(0, length(train) - 1, 1)
+invar <- seq(0, length(data) - 1, 1)
+
+# Skalierung der Daten
+scaled_data <- scale(data[, invar])
+
+# Einteilung des skalierten Caravan-Datensatzes in 80% Trainings- und 20% Testdaten
+rows.scaled_train <- sample(length(data$Purchase), 0.8 * length(data$Purchase))
+scaled_train         <- as.data.frame(scaled_data[rows.scaled_train,])
+scaled_test          <- as.data.frame(scaled_data[-rows.scaled_train,])
 
 # Purchase wird von Trainingsdaten entfernt
-knn_train <- train[, invar]
+knn_train <- scaled_train[, invar]
 
 # Purchase wird von Testdaten entfernt
-knn_test  <- test[, invar]
+knn_test  <- scaled_test[, invar]
 
 # Label der Trainingsdaten für Purchase-Klassifikation als Vektor
-train_label <- train[['Purchase']]
+train_label <- as.data.frame(data[rows.scaled_train,])[['Purchase']]
 
 # Label der Testdaten für Purchase-Klassifikation als Vektor
-test_label  <- test[['Purchase']]
+test_label  <- as.data.frame(data[-rows.scaled_train,])[['Purchase']]
 
 # Drei verschiedene K für knn-Funktion
 k <- c(1, 3, 5)
@@ -81,8 +89,8 @@ k <- c(1, 3, 5)
 # Skalierung notwendig, da 85 unterschiedliche Input-Variablen
 for (i in k) {
   knn <- knn(
-    train = scale(knn_train),
-    test = scale(knn_test),
+    train = knn_train,
+    test = knn_test,
     cl = train_label,
     k = i,
     prob = TRUE
@@ -142,7 +150,7 @@ for (matrix in matrices) {
 # 49 true-positives auf. Das oben beschriebene Ziel, die positives bestmöglich 
 # zu prognostizieren, wird damit mit einer Precision von 58.3 % am
 # ehesten von den berechneten Modellen erreicht. Das Modell eignet sich jedoch
-# nur für diesen Anwendungsfall, da die negative Precision der anderen Modelle
+# nur für diesen Anwendungsfall, da die Negatives-Precision der anderen Modelle
 # deutlich besser ist. Hierdurch kann die höhere average Precision der anderen 
 # Modelle begründet werden.
 
@@ -154,5 +162,5 @@ for (matrix in matrices) {
 # einen akzeptablen trade-off zwischen Precision und Sensitivity zu erreichen.
 
 # Die KNN-Modelle eignen sich für diesen Anwendungsfall eher weniger, da mit 
-# 14.3 % (k=1), 3.6 % (k=3), 3.6 % (k=5) eine niedrige Precision der Positives
+# 12.5 % (k=1), 7.8 % (k=3), 3.1 % (k=5) eine niedrige Precision der Positives
 # zugrunde gelegt wird.
