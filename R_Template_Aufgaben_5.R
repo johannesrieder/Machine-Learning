@@ -70,12 +70,6 @@ rows.scaled_train <- sample(length(data$Purchase), 0.8 * length(data$Purchase))
 scaled_train         <- as.data.frame(scaled_data[rows.scaled_train,])
 scaled_test          <- as.data.frame(scaled_data[-rows.scaled_train,])
 
-# Purchase wird von Trainingsdaten entfernt
-knn_train <- scaled_train[, invar]
-
-# Purchase wird von Testdaten entfernt
-knn_test  <- scaled_test[, invar]
-
 # Label der Trainingsdaten für Purchase-Klassifikation als Vektor
 train_label <- as.data.frame(data[rows.scaled_train,])[['Purchase']]
 
@@ -89,8 +83,8 @@ k <- c(1, 3, 5)
 # Skalierung notwendig, da 85 unterschiedliche Input-Variablen
 for (i in k) {
   knn <- knn(
-    train = knn_train,
-    test = knn_test,
+    train = scaled_train,
+    test = scaled_test,
     cl = train_label,
     k = i,
     prob = TRUE
