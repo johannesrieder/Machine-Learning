@@ -125,4 +125,34 @@ for (matrix in matrices) {
   print(m)
 }
 
-#    ...Platz für Ihren Code, Auswahl und Begründung...
+# Ziel ###
+
+# Für die Versicherung sind nur Kunden interessant, die tatsächlich an einem 
+# Vertrag interessiert sind, weswegen ausschließlich die positive-Spalte der
+# Confusion Matrix zu betrachten ist. True-positives (korrekt als Interessent 
+# klassifiziert) sind möglichst zu maximieren und false-positives (inkorrekt 
+# als Interessent klassifiziert) möglichst zu minimieren. Dadurch können nur 
+# die Kunden kontaktiert werden, welche tatsächlich an einer Versicherung 
+# interessiert sind. 
+
+# Modellauswahl ###
+
+# Das Modell der logistischen Regression mit einem cut-off-point bei 
+# 0.05 (lr_confusionmatrix_t0.05) weist 35 false-positives und
+# 49 true-positives auf. Das oben beschriebene Ziel, die positives bestmöglich 
+# zu prognostizieren, wird damit mit einer Precision von 58.3 % am
+# ehesten von den berechneten Modellen erreicht. Das Modell eignet sich jedoch
+# nur für diesen Anwendungsfall, da die negative Precision der anderen Modelle
+# deutlich besser ist. Hierdurch kann die höhere average Precision der anderen 
+# Modelle begründet werden.
+
+# Auffälligkeiten ###
+
+# Auffällig ist, dass die Precision der Positives im Fall der logistischen
+# Regression zunimmt, wenn sich der cut-off-point sich der 0 annähert. Wir haben
+# uns dazu entschieden, den cut-off-point maximal auf 0.05 zu reduzieren, um
+# einen akzeptablen trade-off zwischen Precision und Sensitivity zu erreichen.
+
+# Die KNN-Modelle eignen sich für diesen Anwendungsfall eher weniger, da mit 
+# 14.3 % (k=1), 3.6 % (k=3), 3.6 % (k=5) eine niedrige Precision der Positives
+# zugrunde gelegt wird.
