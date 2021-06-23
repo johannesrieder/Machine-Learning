@@ -86,7 +86,7 @@ for (i in k) {
     test = scaled_test,
     cl = train_label,
     k = i,
-    prob = TRUE
+    prob = FALSE
   )
   # Erzeugung und Ausgabe der Confusion Matrix
   knn_confusionmatrix = table(knn, test_label)
